@@ -1,5 +1,10 @@
 # depslib dependency file v1.0
-1468288352 source:c:\users\allan\documents\games indev\raycasting\main.cpp
+1468289143 source:c:\users\allan\documents\games indev\raycasting\main.cpp
+	<allegro.h>
+	<alpng.h>
+	<math.h>
+
+1468290301 source:c:\users\allan\documents\games indev\raycasting\main.c
 	<allegro.h>
 	<alpng.h>
 	<math.h>

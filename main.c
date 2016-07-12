@@ -2,6 +2,8 @@
 #include <alpng.h>
 #include <math.h>
 
+#define M_PI 3.14159265358979323846264338327
+
 // Buffer
 BITMAP *buffer;
 BITMAP *ray_buffer;
@@ -12,7 +14,7 @@ float ellipse_x, ellipse_y;
 // Collision stuff
 float poi_x;
 float poi_y;
-bool intersection_found;
+_Bool intersection_found;
 
 // Count for rays
 int number_of_rays;
@@ -151,7 +153,7 @@ void init(){
   // Collision stuff
   poi_x = 0;
   poi_y = 0;
-  intersection_found = false;
+  intersection_found = FALSE;
 
   // Ray count
   number_of_rays = 200;
@@ -167,7 +169,7 @@ void update(){
     poi_x = point_x;
     poi_y = point_y;
 
-    intersection_found = false;
+    intersection_found = FALSE;
 
     for( int i = 0; i < NUM_BOXES; i++){
       for( int t = 0; t < 4; t++){
@@ -183,7 +185,7 @@ void update(){
           if( !intersection_found || distanceTo2D( temp_poi_x, temp_poi_y, ellipse_x, ellipse_y) < distanceTo2D( poi_x, poi_y, ellipse_x, ellipse_y)){
             poi_x = temp_poi_x;
             poi_y = temp_poi_y;
-            intersection_found = true;
+            intersection_found = TRUE;
           }
         }
       }
