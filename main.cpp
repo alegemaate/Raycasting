@@ -153,11 +153,12 @@ void update(){
             poi_y = temp_poi_y;
             intersection_found = true;
           }
-
-          line( ray_buffer, ellipse_x, ellipse_y, poi_x, poi_y, makecol( 0, 0, 0));
         }
       }
     }
+
+    // Draw line to closest collision
+    line( ray_buffer, ellipse_x, ellipse_y, poi_x, poi_y, makecol( 0, 0, 0));
   }
 
   // Move our little friend
