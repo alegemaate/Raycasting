@@ -124,18 +124,15 @@ void init(){
 
 // Update game
 void update(){
-  // Reset collision vars
-  poi_x = mouse_x;
-  poi_y = mouse_y;
-  intersection_found = false;
-
   // Check collision with all boxes!
-  for( double q = 0; q < 2 * M_PI; q += 0.1){
-    float point_x = 2000 * cos(q) + ellipse_x;
-    float point_y = 2000 * sin(q) + ellipse_y;
+  for( double q = 0; q < 2 * M_PI; q += 0.01){
+    float point_x = (SCREEN_W * 2) * cos(q) + ellipse_x;
+    float point_y = (SCREEN_W * 2) * sin(q) + ellipse_y;
 
     poi_x = point_x;
     poi_y = point_y;
+
+    intersection_found = false;
 
     for( int i = 0; i < NUM_BOXES; i++){
       for( int t = 0; t < 4; t++){
@@ -158,26 +155,26 @@ void update(){
     }
 
     // Draw line to closest collision
-    line( ray_buffer, ellipse_x, ellipse_y, poi_x, poi_y, makecol( 0, 0, 0));
+    line( ray_buffer, ellipse_x, ellipse_y, poi_x, poi_y, makecol( 255, 255, 255));
 
     // Draw intersection if there is one
     if( intersection_found){
-      ellipse( ray_buffer, poi_x, poi_y, 5, 5, makecol( 255, 0, 0));
+      //ellipse( ray_buffer, poi_x, poi_y, 5, 5, makecol( 255, 0, 0));
     }
   }
 
   // Move our little friend
   if( key[KEY_UP]){
-    ellipse_y -= 0.5;
+    ellipse_y -= 2;
   }
   if( key[KEY_DOWN]){
-    ellipse_y += 0.5;
+    ellipse_y += 2;
   }
   if( key[KEY_LEFT]){
-    ellipse_x -= 0.5;
+    ellipse_x -= 2;
   }
   if( key[KEY_RIGHT]){
-    ellipse_x += 0.5;
+    ellipse_x += 2;
   }
 
   // Click move
@@ -190,11 +187,13 @@ void update(){
 // Draw to screen
 void draw(){
   // Clear screen
-  rectfill( buffer, 0, 0, SCREEN_W, SCREEN_H, makecol( 255, 255, 255));
+  rectfill( buffer, 0, 0, SCREEN_W, SCREEN_H, makecol( 0, 0, 0));
 
   // Boxes
   for( int i = 0; i < NUM_BOXES; i++){
-    rect( buffer, boxes[i].x, boxes[i].y, boxes[i].x + boxes[i].width, boxes[i].y + boxes[i].height, makecol( 0, 0, 0));
+    for( int t = 0; t < 4; t++){
+      line( buffer, boxes[i].sides[t].x1, boxes[i].sides[t].y1, boxes[i].sides[t].x2, boxes[i].sides[t].y2, makecol( 0, 0, 0));
+    }
   }
 
   // Ray buffer
