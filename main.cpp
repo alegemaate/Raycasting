@@ -14,13 +14,16 @@ float poi_x;
 float poi_y;
 bool intersection_found;
 
+// Point
+typedef struct{
+  int x;
+  int y;
+} prim_point;
+
 // Line
 typedef struct{
-  int x1;
-  int y1;
-
-  int x2;
-  int y2;
+  prim_point p1;
+  prim_point p2;
 } prim_line;
 
 // Boxes
@@ -31,6 +34,7 @@ typedef struct{
   int height;
 
   prim_line sides[4];
+  prim_point points[4];
 } box;
 
 #define NUM_BOXES 20
@@ -43,12 +47,29 @@ int random( int min, int max){
   return random_number;
 }
 
+// Make shape
+void make_shape( prim_point *_points, prim_line *_lines, int _length){
+  for( int i = 0; i < _length; i++){
+    _lines[i].p1.x = _points[i].x;
+    _lines[i].p1.y = _points[i].y;
+
+    if( i < _length - 1){
+      _lines[i].p2.x = _points[i + 1].x;
+      _lines[i].p2.y = _points[i + 1].y;
+    }
+    else{
+      _lines[i].p2.x = _points[0].x;
+      _lines[i].p2.y = _points[0].y;
+    }
+  }
+}
+
 // Init lines
 void set_line( int _x1, int _y1, int _x2, int _y2, prim_line *_line){
-  _line -> x1 = _x1;
-  _line -> y1 = _y1;
-  _line -> x2 = _x2;
-  _line -> y2 = _y2;
+  _line -> p1.x = _x1;
+  _line -> p1.y = _y1;
+  _line -> p2.x = _x2;
+  _line -> p2.y = _y2;
 }
 
 // Returns distance 2D
@@ -103,17 +124,19 @@ void init(){
 
   // Setup all boxes randomly
   for( int i = 0; i < NUM_BOXES; i++){
-    boxes[i].x = random( 0, SCREEN_W);
-    boxes[i].y = random( 0, SCREEN_H);
-    boxes[i].width = random( 10, 100);
-    boxes[i].height = random( 10, 100);
+    boxes[i].width = random( 50, 400);
+    boxes[i].height = random( 50, 400);
+    boxes[i].x = random( 0, SCREEN_W - boxes[i].width);
+    boxes[i].y = random( 0, SCREEN_H - boxes[i].height);
 
     // Sides
-    // Top
-    set_line( 0, 0, boxes[i].width, 0, &boxes[i].sides[0]);
-    set_line( 0, boxes[i].height, boxes[i].width, boxes[i].height, &boxes[i].sides[1]);
-    set_line( 0, 0, 0, boxes[i].height, &boxes[i].sides[2]);
-    set_line( boxes[i].width, 0, boxes[i].width, boxes[i].height, &boxes[i].sides[3]);
+    for( int t = 0; t < 4; t++){
+      boxes[i].points[t].x = random( 0, boxes[i].width);
+      boxes[i].points[t].y = random( 0, boxes[i].height);
+    }
+
+    // Make a shape
+    make_shape( boxes[i].points, boxes[i].sides, 4);
   }
 
   // Collision stuff
@@ -141,8 +164,8 @@ void update(){
 
         // Check if ray and side intersect
         if( get_line_intersection( ellipse_x, ellipse_y, point_x, point_y,
-                                   boxes[i].sides[t].x1 + boxes[i].x, boxes[i].sides[t].y1 + boxes[i].y,
-                                   boxes[i].sides[t].x2 + boxes[i].x, boxes[i].sides[t].y2 + boxes[i].y,
+                                   boxes[i].sides[t].p1.x + boxes[i].x, boxes[i].sides[t].p1.y + boxes[i].y,
+                                   boxes[i].sides[t].p2.x + boxes[i].x, boxes[i].sides[t].p2.y + boxes[i].y,
                                    &temp_poi_x, &temp_poi_y)){
           // Check if closer match found
           if( !intersection_found || distanceTo2D( temp_poi_x, temp_poi_y, ellipse_x, ellipse_y) < distanceTo2D( poi_x, poi_y, ellipse_x, ellipse_y)){
@@ -158,8 +181,8 @@ void update(){
     line( ray_buffer, ellipse_x, ellipse_y, poi_x, poi_y, makecol( 255, 255, 255));
 
     // Draw intersection if there is one
-    if( intersection_found){
-      //ellipse( ray_buffer, poi_x, poi_y, 5, 5, makecol( 255, 0, 0));
+    if( intersection_found && key[KEY_SPACE]){
+      ellipse( ray_buffer, poi_x, poi_y, 5, 5, makecol( 255, 0, 0));
     }
   }
 
@@ -190,9 +213,12 @@ void draw(){
   rectfill( buffer, 0, 0, SCREEN_W, SCREEN_H, makecol( 0, 0, 0));
 
   // Boxes
-  for( int i = 0; i < NUM_BOXES; i++){
-    for( int t = 0; t < 4; t++){
-      line( buffer, boxes[i].sides[t].x1, boxes[i].sides[t].y1, boxes[i].sides[t].x2, boxes[i].sides[t].y2, makecol( 0, 0, 0));
+  if( key[KEY_SPACE]){
+    for( int i = 0; i < NUM_BOXES; i++){
+      for( int t = 0; t < 4; t++){
+        line( buffer, boxes[i].sides[t].p1.x + boxes[i].x, boxes[i].sides[t].p1.y + boxes[i].y,
+                      boxes[i].sides[t].p2.x + boxes[i].x, boxes[i].sides[t].p2.y + boxes[i].y, makecol( 255, 255, 255));
+      }
     }
   }
 
