@@ -4,9 +4,10 @@
 
 // Buffer
 BITMAP *buffer;
+BITMAP *ray_buffer;
 
 // Ellipse position
-int ellipse_x, ellipse_y;
+float ellipse_x, ellipse_y;
 
 // Collision stuff
 float poi_x;
@@ -94,6 +95,7 @@ void init(){
 
   // Create buffer
   buffer = create_bitmap( SCREEN_W, SCREEN_H);
+  ray_buffer = create_bitmap( SCREEN_W, SCREEN_H);
 
   // Set ellipse position
   ellipse_x = SCREEN_W / 2;
@@ -128,26 +130,54 @@ void update(){
   intersection_found = false;
 
   // Check collision with all boxes!
-  for( int i = 0; i < NUM_BOXES; i++){
-    for( int t = 0; t < 4; t++){
-      float temp_poi_x = -1;
-      float temp_poi_y = -1;
+  for( double q = 0; q < 2 * M_PI; q += 0.1){
+    float point_x = 400 * cos(q) + ellipse_x;
+    float point_y = 400 * sin(q) + ellipse_y;
 
-      // Check if ray and side intersect
-      if( get_line_intersection( ellipse_x, ellipse_y, mouse_x, mouse_y,
-                                 boxes[i].sides[t].x1 + boxes[i].x, boxes[i].sides[t].y1 + boxes[i].y,
-                                 boxes[i].sides[t].x2 + boxes[i].x, boxes[i].sides[t].y2 + boxes[i].y,
-                                 &temp_poi_x, &temp_poi_y)){
+    poi_x = point_x;
+    poi_y = point_y;
 
+    for( int i = 0; i < NUM_BOXES; i++){
+      for( int t = 0; t < 4; t++){
+        float temp_poi_x = -1;
+        float temp_poi_y = -1;
 
-        // Check if closer match found
-        if( !intersection_found || distanceTo2D( temp_poi_x, temp_poi_y, ellipse_x, ellipse_y) < distanceTo2D( poi_x, poi_y, ellipse_x, ellipse_y)){
-          poi_x = temp_poi_x;
-          poi_y = temp_poi_y;
-          intersection_found = true;
+        // Check if ray and side intersect
+        if( get_line_intersection( ellipse_x, ellipse_y, point_x, point_y,
+                                   boxes[i].sides[t].x1 + boxes[i].x, boxes[i].sides[t].y1 + boxes[i].y,
+                                   boxes[i].sides[t].x2 + boxes[i].x, boxes[i].sides[t].y2 + boxes[i].y,
+                                   &temp_poi_x, &temp_poi_y)){
+          // Check if closer match found
+          if( !intersection_found || distanceTo2D( temp_poi_x, temp_poi_y, ellipse_x, ellipse_y) < distanceTo2D( poi_x, poi_y, ellipse_x, ellipse_y)){
+            poi_x = temp_poi_x;
+            poi_y = temp_poi_y;
+            intersection_found = true;
+          }
+
+          line( ray_buffer, ellipse_x, ellipse_y, poi_x, poi_y, makecol( 0, 0, 0));
         }
       }
     }
+  }
+
+  // Move our little friend
+  if( key[KEY_UP]){
+    ellipse_y -= 0.5;
+  }
+  if( key[KEY_DOWN]){
+    ellipse_y += 0.5;
+  }
+  if( key[KEY_LEFT]){
+    ellipse_x -= 0.5;
+  }
+  if( key[KEY_RIGHT]){
+    ellipse_x += 0.5;
+  }
+
+  // Click move
+  if( mouse_b & 1){
+    ellipse_x = mouse_x;
+    ellipse_y = mouse_y;
   }
 }
 
@@ -161,6 +191,10 @@ void draw(){
     rect( buffer, boxes[i].x, boxes[i].y, boxes[i].x + boxes[i].width, boxes[i].y + boxes[i].height, makecol( 0, 0, 0));
   }
 
+  // Ray buffer
+  draw_sprite( buffer, ray_buffer, 0, 0);
+  rectfill( ray_buffer, 0, 0, SCREEN_W, SCREEN_H, makecol( 255, 0, 255));
+
   // Player
   ellipse( buffer, ellipse_x, ellipse_y, 10, 10, makecol( 0, 0, 0));
 
@@ -171,11 +205,11 @@ void draw(){
   line( buffer, mouse_x + 20, mouse_y + 10, mouse_x + 12, mouse_y + 12, makecol( 0, 0, 0));
 
   // Draw intersection ( if one found)
-  if( intersection_found){
+  /*if( intersection_found){
     ellipse( buffer, poi_x, poi_y, 5, 5, makecol( 255, 0, 0));
   }
 
-  line( buffer, ellipse_x, ellipse_y, poi_x, poi_y, makecol( 0, 0, 0));
+  line( buffer, ellipse_x, ellipse_y, poi_x, poi_y, makecol( 0, 0, 0));*/
 
   // Draw buffer
   draw_sprite( screen, buffer, 0, 0);
