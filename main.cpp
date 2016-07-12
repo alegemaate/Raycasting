@@ -14,6 +14,9 @@ float poi_x;
 float poi_y;
 bool intersection_found;
 
+// Count for rays
+int number_of_rays;
+
 // Point
 typedef struct{
   int x;
@@ -102,6 +105,26 @@ char get_line_intersection(float p0_x, float p0_y, float p1_x, float p1_y,
     return 0; // No collision
 }
 
+// Gen shapes
+void generate_shapes(){
+  // Setup all boxes randomly
+  for( int i = 0; i < NUM_BOXES; i++){
+    boxes[i].width = random( 50, 400);
+    boxes[i].height = random( 50, 400);
+    boxes[i].x = random( 0, SCREEN_W - boxes[i].width);
+    boxes[i].y = random( 0, SCREEN_H - boxes[i].height);
+
+    // Sides
+    for( int t = 0; t < 4; t++){
+      boxes[i].points[t].x = random( 0, boxes[i].width);
+      boxes[i].points[t].y = random( 0, boxes[i].height);
+    }
+
+    // Make a shape
+    make_shape( boxes[i].points, boxes[i].sides, 4);
+  }
+}
+
 // Initilize game
 void init(){
   allegro_init();
@@ -122,33 +145,22 @@ void init(){
   ellipse_x = SCREEN_W / 2;
   ellipse_y = SCREEN_H / 2;
 
-  // Setup all boxes randomly
-  for( int i = 0; i < NUM_BOXES; i++){
-    boxes[i].width = random( 50, 400);
-    boxes[i].height = random( 50, 400);
-    boxes[i].x = random( 0, SCREEN_W - boxes[i].width);
-    boxes[i].y = random( 0, SCREEN_H - boxes[i].height);
-
-    // Sides
-    for( int t = 0; t < 4; t++){
-      boxes[i].points[t].x = random( 0, boxes[i].width);
-      boxes[i].points[t].y = random( 0, boxes[i].height);
-    }
-
-    // Make a shape
-    make_shape( boxes[i].points, boxes[i].sides, 4);
-  }
+  // Generate shapes
+  generate_shapes();
 
   // Collision stuff
   poi_x = 0;
   poi_y = 0;
   intersection_found = false;
+
+  // Ray count
+  number_of_rays = 200;
 }
 
 // Update game
 void update(){
   // Check collision with all boxes!
-  for( double q = 0; q < 2 * M_PI; q += 0.01){
+  for( double q = 0; q < 2 * M_PI; q += ((2 * M_PI) / number_of_rays)){
     float point_x = (SCREEN_W * 2) * cos(q) + ellipse_x;
     float point_y = (SCREEN_W * 2) * sin(q) + ellipse_y;
 
@@ -205,6 +217,19 @@ void update(){
     ellipse_x = mouse_x;
     ellipse_y = mouse_y;
   }
+
+  // Respawn shapes
+  if( key[KEY_R]){
+    generate_shapes();
+  }
+
+  // Change number of rays
+  if( key[KEY_PLUS_PAD])
+    number_of_rays ++;
+  else if( key[KEY_MINUS_PAD]){
+    if( number_of_rays > 0)
+      number_of_rays --;
+  }
 }
 
 // Draw to screen
@@ -234,6 +259,12 @@ void draw(){
   line( buffer, mouse_x, mouse_y, mouse_x + 10, mouse_y + 20, makecol( 0, 0, 0));
   line( buffer, mouse_x + 10, mouse_y + 20, mouse_x + 12, mouse_y + 12, makecol( 0, 0, 0));
   line( buffer, mouse_x + 20, mouse_y + 10, mouse_x + 12, mouse_y + 12, makecol( 0, 0, 0));
+
+  // Text telling help
+  textprintf_ex( buffer, font, 20, SCREEN_H - 100, makecol( 255, 255, 255), makecol( 0, 0, 0), "[R] Respawn shapes");
+  textprintf_ex( buffer, font, 20, SCREEN_H - 80, makecol( 255, 255, 255), makecol( 0, 0, 0), "[SPACE] Show shapes and colliders");
+  textprintf_ex( buffer, font, 20, SCREEN_H - 60, makecol( 255, 255, 255), makecol( 0, 0, 0), "[MOUSE CLICK/ARROW KEYS] Move ellipse (%.0f,%.0f)", ellipse_x, ellipse_y);
+  textprintf_ex( buffer, font, 20, SCREEN_H - 40, makecol( 255, 255, 255), makecol( 0, 0, 0), "[+/-] Number of rays (%i)", number_of_rays);
 
   // Draw buffer
   draw_sprite( screen, buffer, 0, 0);
