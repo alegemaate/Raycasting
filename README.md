@@ -1,6 +1,9 @@
 # Raycasting Example
 A simple Allegro raycaster written in c.
 
+## Screenshot:
+![alt tag](https://raw.githubusercontent.com/alegemaate/raycasting/master/screenshot.png)
+
 ## Controls:
 + **[R]** Respawn shapes
 
