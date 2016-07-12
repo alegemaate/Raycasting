@@ -131,8 +131,8 @@ void update(){
 
   // Check collision with all boxes!
   for( double q = 0; q < 2 * M_PI; q += 0.1){
-    float point_x = 400 * cos(q) + ellipse_x;
-    float point_y = 400 * sin(q) + ellipse_y;
+    float point_x = 2000 * cos(q) + ellipse_x;
+    float point_y = 2000 * sin(q) + ellipse_y;
 
     poi_x = point_x;
     poi_y = point_y;
@@ -159,6 +159,11 @@ void update(){
 
     // Draw line to closest collision
     line( ray_buffer, ellipse_x, ellipse_y, poi_x, poi_y, makecol( 0, 0, 0));
+
+    // Draw intersection if there is one
+    if( intersection_found){
+      ellipse( ray_buffer, poi_x, poi_y, 5, 5, makecol( 255, 0, 0));
+    }
   }
 
   // Move our little friend
@@ -204,13 +209,6 @@ void draw(){
   line( buffer, mouse_x, mouse_y, mouse_x + 10, mouse_y + 20, makecol( 0, 0, 0));
   line( buffer, mouse_x + 10, mouse_y + 20, mouse_x + 12, mouse_y + 12, makecol( 0, 0, 0));
   line( buffer, mouse_x + 20, mouse_y + 10, mouse_x + 12, mouse_y + 12, makecol( 0, 0, 0));
-
-  // Draw intersection ( if one found)
-  /*if( intersection_found){
-    ellipse( buffer, poi_x, poi_y, 5, 5, makecol( 255, 0, 0));
-  }
-
-  line( buffer, ellipse_x, ellipse_y, poi_x, poi_y, makecol( 0, 0, 0));*/
 
   // Draw buffer
   draw_sprite( screen, buffer, 0, 0);
