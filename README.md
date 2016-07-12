@@ -1,5 +1,5 @@
-# raycasting
-A simple allegro raycaster written in c.
+# Raycasting Example
+A simple Allegro raycaster written in c.
 
 ## Controls:
 + **[R]** Respawn shapes
