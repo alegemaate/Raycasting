@@ -1,8 +1,8 @@
 #include <allegro.h>
-#include <alpng.h>
 #include <math.h>
 
 #define M_PI 3.14159265358979323846264338327
+#define NUM_BOXES 5
 
 // Buffer
 BITMAP *buffer;
@@ -41,8 +41,6 @@ typedef struct{
   prim_line sides[4];
   prim_point points[4];
 } box;
-
-#define NUM_BOXES 20
 
 box boxes[NUM_BOXES];
 
@@ -130,14 +128,13 @@ void generate_shapes(){
 // Initilize game
 void init(){
   allegro_init();
-  alpng_init();
   install_keyboard();
   install_mouse();
 
   install_sound(DIGI_AUTODETECT,MIDI_AUTODETECT,".");
   set_color_depth( 32);
-  set_window_title("Forager");
-  set_gfx_mode( GFX_AUTODETECT_WINDOWED, 1280, 960, 0, 0);
+  set_window_title("Raycaster");
+  set_gfx_mode( GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0);
 
   // Create buffer
   buffer = create_bitmap( SCREEN_W, SCREEN_H);
@@ -178,11 +175,15 @@ void update(){
 
         // Check if ray and side intersect
         if( get_line_intersection( ellipse_x, ellipse_y, point_x, point_y,
-                                   boxes[i].sides[t].p1.x + boxes[i].x, boxes[i].sides[t].p1.y + boxes[i].y,
-                                   boxes[i].sides[t].p2.x + boxes[i].x, boxes[i].sides[t].p2.y + boxes[i].y,
+                                   boxes[i].sides[t].p1.x + boxes[i].x,
+                                   boxes[i].sides[t].p1.y + boxes[i].y,
+                                   boxes[i].sides[t].p2.x + boxes[i].x,
+                                   boxes[i].sides[t].p2.y + boxes[i].y,
                                    &temp_poi_x, &temp_poi_y)){
           // Check if closer match found
-          if( !intersection_found || distanceTo2D( temp_poi_x, temp_poi_y, ellipse_x, ellipse_y) < distanceTo2D( poi_x, poi_y, ellipse_x, ellipse_y)){
+          if( !intersection_found ||
+              distanceTo2D( temp_poi_x, temp_poi_y, ellipse_x, ellipse_y) <
+              distanceTo2D( poi_x, poi_y, ellipse_x, ellipse_y)){
             poi_x = temp_poi_x;
             poi_y = temp_poi_y;
             intersection_found = TRUE;
@@ -195,24 +196,19 @@ void update(){
     line( ray_buffer, ellipse_x, ellipse_y, poi_x, poi_y, makecol( 255, 255, 255));
 
     // Draw intersection if there is one
-    if( intersection_found && key[KEY_SPACE]){
+    if( intersection_found && key[KEY_SPACE])
       ellipse( ray_buffer, poi_x, poi_y, 5, 5, makecol( 255, 0, 0));
-    }
   }
 
   // Move our little friend
-  if( key[KEY_UP]){
+  if( key[KEY_UP])
     ellipse_y -= 2;
-  }
-  if( key[KEY_DOWN]){
+  if( key[KEY_DOWN])
     ellipse_y += 2;
-  }
-  if( key[KEY_LEFT]){
+  if( key[KEY_LEFT])
     ellipse_x -= 2;
-  }
-  if( key[KEY_RIGHT]){
+  if( key[KEY_RIGHT])
     ellipse_x += 2;
-  }
 
   // Click move
   if( mouse_b & 1){
@@ -243,8 +239,11 @@ void draw(){
   if( key[KEY_SPACE]){
     for( int i = 0; i < NUM_BOXES; i++){
       for( int t = 0; t < 4; t++){
-        line( buffer, boxes[i].sides[t].p1.x + boxes[i].x, boxes[i].sides[t].p1.y + boxes[i].y,
-                      boxes[i].sides[t].p2.x + boxes[i].x, boxes[i].sides[t].p2.y + boxes[i].y, makecol( 255, 255, 255));
+        line( buffer, boxes[i].sides[t].p1.x + boxes[i].x,
+                      boxes[i].sides[t].p1.y + boxes[i].y,
+                      boxes[i].sides[t].p2.x + boxes[i].x,
+                      boxes[i].sides[t].p2.y + boxes[i].y,
+                      makecol( 255, 255, 255));
       }
     }
   }
@@ -263,10 +262,16 @@ void draw(){
   line( buffer, mouse_x + 20, mouse_y + 10, mouse_x + 12, mouse_y + 12, makecol( 0, 0, 0));
 
   // Text telling help
-  textprintf_ex( buffer, font, 20, SCREEN_H - 100, makecol( 255, 255, 255), makecol( 0, 0, 0), "[R] Respawn shapes");
-  textprintf_ex( buffer, font, 20, SCREEN_H - 80, makecol( 255, 255, 255), makecol( 0, 0, 0), "[SPACE] Show shapes and colliders");
-  textprintf_ex( buffer, font, 20, SCREEN_H - 60, makecol( 255, 255, 255), makecol( 0, 0, 0), "[MOUSE CLICK/ARROW KEYS] Move ellipse (%.0f,%.0f)", ellipse_x, ellipse_y);
-  textprintf_ex( buffer, font, 20, SCREEN_H - 40, makecol( 255, 255, 255), makecol( 0, 0, 0), "[+/-] Number of rays (%i)", number_of_rays);
+  textprintf_ex( buffer, font, 20, SCREEN_H - 100, makecol( 255, 255, 255),
+                 makecol( 0, 0, 0), "[R] Respawn shapes");
+  textprintf_ex( buffer, font, 20, SCREEN_H - 80 , makecol( 255, 255, 255),
+                 makecol( 0, 0, 0), "[SPACE] Show shapes and colliders");
+  textprintf_ex( buffer, font, 20, SCREEN_H - 60 , makecol( 255, 255, 255),
+                 makecol( 0, 0, 0),
+                "[MOUSE CLICK/ARROW KEYS] Move ellipse (%.0f,%.0f)",
+                ellipse_x, ellipse_y);
+  textprintf_ex( buffer, font, 20, SCREEN_H - 40 , makecol( 255, 255, 255),
+                 makecol( 0, 0, 0), "[+/-] Number of rays (%i)", number_of_rays);
 
   // Draw buffer
   draw_sprite( screen, buffer, 0, 0);
