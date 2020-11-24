@@ -1,0 +1,35 @@
+name: Build and Deploy Project
+
+on:
+  push:
+    branches: 
+      - master
+      - feature/sdl
+
+jobs:
+  build:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v7
+        with:
+          actions-cache-folder: 'emsdk-cache'
+
+      - name: Build Project
+        run: |
+          emcmake cmake -G "Unix Makefiles" .
+          emmake make || true
+          emmake make
+
+      - name: Deploy to GitHub pages
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: public
+          SINGLE_COMMIT: true
