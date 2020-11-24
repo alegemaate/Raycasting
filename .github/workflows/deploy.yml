@@ -34,7 +34,9 @@ jobs:
           actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
 
       - name: Install SDL2
-        run: sudo apt-get install libsdl2-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install libsdl2-dev
 
       - name: Build Project
         run: |
