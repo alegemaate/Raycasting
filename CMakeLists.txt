@@ -5,7 +5,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 
 project (RayCasting)
 
-find_library(ALLEGRO_LIBRARY NAMES liballeg44.dll.a liballeg.so liballeg44.dylib)
+find_library(SDL_LIBRARY NAMES libSDL2.dll.a libSDL2.so libSDL2.dylib)
 
 # SOURCE
 file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
@@ -16,4 +16,4 @@ add_executable (RayCasting ${SOURCES} ${HEADERS})
 target_compile_options(RayCasting PRIVATE -Wall -Wextra -pedantic)
 
 target_link_libraries(RayCasting -lm)
-target_link_libraries(RayCasting ${ALLEGRO_LIBRARY})
+target_link_libraries(RayCasting ${SDL_LIBRARY})
