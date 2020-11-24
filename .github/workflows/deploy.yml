@@ -33,6 +33,9 @@ jobs:
           version: ${{env.EM_VERSION}}
           actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
 
+      - name: Install SDL2
+        run: apt-get install libsdl2-dev
+
       - name: Build Project
         run: |
           emcmake cmake .
