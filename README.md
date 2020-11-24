@@ -1,5 +1,5 @@
 # Raycasting Example
-![Build and Deploy](https://github.com/alegemaate/Raycasting/workflows/Build%20and%20Deploy%20Project/badge.svg)
+![Build and Deploy](https://github.com/alegemaate/Raycasting/workflows/Build%20and%20Deploy/badge.svg)
 
 A simple SDL2 raycaster written in c.
 
