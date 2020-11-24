@@ -35,7 +35,7 @@ jobs:
 
       - name: Build Project
         run: |
-          cmake .
+          emcmake cmake .
           make
           
       - name: Deploy to GitHub pages
