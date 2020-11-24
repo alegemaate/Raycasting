@@ -2,10 +2,10 @@
 #include <emscripten.h>
 #include <emscripten/html5.h>
 #endif
+#include <SDL2/SDL.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include "/usr/local/include/SDL2/SDL.h"
 
 #include "./colors.c"
 #include "./primitives.c"
