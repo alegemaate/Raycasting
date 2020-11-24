@@ -23,14 +23,12 @@ file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 # Compile options
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -O2)
+target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -pedantic -O2)
 
 # Link
 if(EMSCRIPTEN)
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
-  target_link_libraries(${PROJECT_NAME} "-s WASM=1") #web assembly FTW
-  target_link_libraries(${PROJECT_NAME} "-s USE_SDL=2")
-  target_link_libraries(${PROJECT_NAME} "-s DEMANGLE_SUPPORT=1")
+  target_compile_options(${PROJECT_NAME} PUBLIC -sWASM=1 -sUSE_SDL=2 -sDEMANGLE_SUPPORT=1) #web assembly FTW
 else(EMSCRIPTEN)
   if(MINGW)
     target_link_libraries(${PROJECT_NAME} -lmingw32)
