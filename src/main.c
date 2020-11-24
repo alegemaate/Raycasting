@@ -1,3 +1,7 @@
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#endif
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -25,6 +29,9 @@ float ellipse_x, ellipse_y;
 
 // Count for rays
 int number_of_rays;
+
+// Quit status
+bool quit = false;
 
 // Box instances
 PRIM_BOX boxes[NUM_POLYS];
@@ -286,6 +293,19 @@ void draw() {
   SDL_RenderPresent(buffer);
 }
 
+void loop() {
+  SDL_Event e;
+
+  while (SDL_PollEvent(&e)) {
+    if (e.type == SDL_QUIT) {
+      quit = true;
+    } else {
+      update();
+      draw();
+    }
+  }
+}
+
 // Main
 int main() {
   // Initilize game
@@ -293,19 +313,13 @@ int main() {
     return 1;
   }
 
-  // Loop until exit
-  bool quit = false;
-  SDL_Event e;
+#ifdef __EMSCRIPTEN__
+  emscripten_set_main_loop(loop, 60, true);
+#else
   while (!quit) {
-    while (SDL_PollEvent(&e)) {
-      if (e.type == SDL_QUIT) {
-        quit = true;
-      } else {
-        update();
-        draw();
-      }
-    }
+    loop();
   }
+#endif
 
   // Exit
   SDL_DestroyWindow(window);
