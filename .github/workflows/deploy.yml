@@ -9,26 +9,19 @@ on:
 jobs:
   build:
     name: Build and Deploy
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Install SDL2
-        run: |
-          sudo apt update
-          sudo apt install libsdl2-dev
-
-      - name: Setup Emscripten
-        uses: mymindstorm/setup-emsdk@v7
-        with:
-          actions-cache-folder: 'emsdk-cache'
+      - name: Install emscripten
+        run: brew install emscripten
 
       - name: Build Project
         run: |
           emcmake cmake -G "Unix Makefiles" .
-          cmake --build .
+          emmake make
 
       - name: Deploy to GitHub pages
         uses: JamesIves/github-pages-deploy-action@3.7.1
