@@ -57,4 +57,5 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 build
-public
+public/*
+!public/index.html

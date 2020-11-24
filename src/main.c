@@ -10,6 +10,11 @@
 #include "./colors.c"
 #include "./primitives.c"
 
+// Define pi if not defined
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 // Screen dimension constants
 const int SCREEN_W = 640;
 const int SCREEN_H = 480;
@@ -121,6 +126,8 @@ void generate_shapes() {
 
 // Initilize game
 int init() {
+  printf("Setting up\n");
+
   // Setup SDL
   if (SDL_Init(SDL_INIT_VIDEO)) {
     printf("Could not init sdl: %s\n", SDL_GetError());
@@ -152,6 +159,8 @@ int init() {
 
   // Init keyboard state
   key = SDL_GetKeyboardState(NULL);
+
+  printf("Ready!\n");
 
   // Success
   return 0;
