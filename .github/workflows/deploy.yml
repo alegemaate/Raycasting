@@ -12,6 +12,7 @@ env:
 
 jobs:
   build:
+    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -35,13 +36,13 @@ jobs:
 
       - name: Install SDL2
         run: |
-          sudo apt-get update
-          sudo apt-get install libsdl2-dev
+          sudo apt update
+          sudo apt install libsdl2-dev
 
       - name: Build Project
         run: |
           emcmake cmake .
-          make
+          emmake make
           
       - name: Deploy to GitHub pages
         uses: JamesIves/github-pages-deploy-action@3.7.1
