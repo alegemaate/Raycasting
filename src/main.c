@@ -307,7 +307,7 @@ void loop() {
 }
 
 // Main
-int main() {
+int main(int argc, char* argv[]) {
   // Initilize game
   if (init()) {
     return 1;
