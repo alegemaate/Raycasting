@@ -1,20 +1,21 @@
 cmake_minimum_required(VERSION 3.5)
+
+set(PROJECT_NAME "RayCasting")
+project (${PROJECT_NAME})
+
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-
-# Print system
-message("Emscripten [${EMSCRIPTEN}]")
+set(CMAKE_VERBOSE_MAKEFILE on)
 
 # Project and out dir
 if(EMSCRIPTEN)
+  message("Build [Emscripten]")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/public)
-  set(PROJECT_NAME "RayCasting.html")
-else()
+else(EMSCRIPTEN)
+  message("Build [Binary]")
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
-  set(PROJECT_NAME "RayCasting")
-endif()
+endif(EMSCRIPTEN)
 
-project (${PROJECT_NAME})
 
 # Source
 file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
