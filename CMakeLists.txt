@@ -28,7 +28,8 @@ target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -pedantic -O2)
 # Link
 if(EMSCRIPTEN)
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
-  target_compile_options(${PROJECT_NAME} PUBLIC -sWASM=1 -sUSE_SDL=2 -sDEMANGLE_SUPPORT=1) #web assembly FTW
+  target_compile_options(${PROJECT_NAME} PUBLIC -sWASM=1 -sUSE_SDL=2 -sDEMANGLE_SUPPORT=1)
+  target_link_libraries(${PROJECT_NAME} -sUSE_SDL=2)
 else(EMSCRIPTEN)
   if(MINGW)
     target_link_libraries(${PROJECT_NAME} -lmingw32)
