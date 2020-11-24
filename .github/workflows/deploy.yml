@@ -23,6 +23,7 @@ jobs:
       - name: Build Project
         run: |
           emcmake cmake -G "Unix Makefiles" .
+          emmake make || true
           emmake make
 
       - name: Deploy to GitHub pages
