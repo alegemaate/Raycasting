@@ -6,10 +6,6 @@ on:
       - master
       - feature/sdl
 
-env:
-  EM_VERSION: 2.0.7
-  EM_CACHE_FOLDER: 'emsdk-cache'
-
 jobs:
   build:
     name: Build and Deploy
@@ -18,32 +14,22 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-        with:
-          lfs: true
-
-      - name: Setup cache
-        id: cache-system-libraries
-        uses: actions/cache@v2
-        with:
-          path: ${{env.EM_CACHE_FOLDER}}
-          key: ${{env.EM_VERSION}}-${{ runner.os }}
-
-      - name: Setup Emscripten
-        uses: mymindstorm/setup-emsdk@v7
-        with:
-          version: ${{env.EM_VERSION}}
-          actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
 
       - name: Install SDL2
         run: |
           sudo apt update
           sudo apt install libsdl2-dev
 
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v7
+        with:
+          actions-cache-folder: 'emsdk-cache'
+
       - name: Build Project
         run: |
-          emcmake cmake .
-          emmake make
-          
+          emcmake cmake -G "Unix Makefiles" .
+          cmake --build
+
       - name: Deploy to GitHub pages
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
